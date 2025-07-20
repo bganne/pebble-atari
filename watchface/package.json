@@ -1,0 +1,68 @@
+{
+  "name": "pebble-atari",
+  "author": "Benoît Ganne",
+  "version": "1.0.0",
+  "keywords": ["pebble-app", "Atari ST"],
+  "private": true,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "pebble-atari",
+    "uuid": "be4deb9e-c6de-4ab8-b97c-a51650b64818",
+    "sdkVersion": "3",
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
+    "resources": {
+      "media": [
+        {
+          "type": "png",
+          "name": "IMAGE_BOMB",
+          "file": "images/bomb.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_BEE",
+          "file": "images/bee.png"
+        },
+        {
+          "type": "font",
+          "name": "FONT_TIME_42",
+          "file": "fonts/atari.ttf",
+          "characterRegex": "[0-9: ]",
+          "trackingAdjust": 0
+        },
+        {
+          "type": "font",
+          "name": "FONT_DATE_24",
+          "file": "fonts/atari.ttf",
+          "characterRegex": "[A-Za-z0-9-]",
+          "trackingAdjust": 0
+        },
+        { "type": "png", "name": "IMAGE_ANIM_00", "file": "images/output_0099.png" },
+        { "type": "png", "name": "IMAGE_ANIM_01", "file": "images/output_0100.png" },
+        { "type": "png", "name": "IMAGE_ANIM_02", "file": "images/output_0101.png" },
+        { "type": "png", "name": "IMAGE_ANIM_03", "file": "images/output_0102.png" },
+        { "type": "png", "name": "IMAGE_ANIM_04", "file": "images/output_0103.png" },
+        { "type": "png", "name": "IMAGE_ANIM_05", "file": "images/output_0104.png" },
+        { "type": "png", "name": "IMAGE_ANIM_06", "file": "images/output_0105.png" },
+        { "type": "png", "name": "IMAGE_ANIM_07", "file": "images/output_0106.png" },
+        { "type": "png", "name": "IMAGE_ANIM_08", "file": "images/output_0107.png" },
+        { "type": "png", "name": "IMAGE_ANIM_09", "file": "images/output_0108.png" },
+        { "type": "png", "name": "IMAGE_ANIM_10", "file": "images/output_0109.png" },
+        { "type": "png", "name": "IMAGE_ANIM_11", "file": "images/output_0110.png" },
+        { "type": "png", "name": "IMAGE_ANIM_12", "file": "images/output_0111.png" },
+        { "type": "png", "name": "IMAGE_ANIM_13", "file": "images/output_0113.png" },
+        { "type": "png", "name": "IMAGE_ANIM_14", "file": "images/output_0114.png" },
+        { "type": "png", "name": "IMAGE_ANIM_15", "file": "images/output_0115.png" },
+        { "type": "png", "name": "IMAGE_ANIM_16", "file": "images/output_0122.png" },
+        { "type": "png", "name": "IMAGE_ANIM_17", "file": "images/output_0176.png" }
+      ]
+    }
+  }
+}
