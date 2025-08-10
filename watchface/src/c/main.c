@@ -159,6 +159,8 @@ static void bomb_animation_handler(void *data) {
     bitmap_layer_set_compositing_mode(s_bomb_layers[i], GCompOpSet);
     layer_add_child(window_layer, bitmap_layer_get_layer(s_bomb_layers[i]));
   }
+
+  vibes_double_pulse();
 }
 
 static void schedule_bomb_animation() {
