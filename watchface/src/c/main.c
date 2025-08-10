@@ -4,6 +4,7 @@
 #define ANIM_FRAME_PAUSE_MS 100
 #define BEE_DISPLAY_PAUSE_MS 6000
 #define BEE_ANIM_SECOND_MARK 55
+#define BEE_MARGIN 20
 #define DATE_FORMAT "%a-%b-%d"
 #define TIME_FORMAT_24H "%H:%M"
 #define TIME_FORMAT_12H "%I:%M"
@@ -66,6 +67,7 @@ static GFont s_date_font;
 
 static char s_time_buffer[8];
 static char s_date_buffer[16];
+static const char *s_time_format;
 
 static BitmapLayer *s_animation_layer;
 static int s_animation_frame_index;
@@ -76,6 +78,9 @@ static bool s_animation_done = false;
 static BitmapLayer *s_bee_layer;
 static GBitmap *s_bee_bitmap;
 static AppTimer *s_bee_timer;
+static GSize s_bee_size;
+static uint16_t s_bee_x_range;
+static uint16_t s_bee_y_range;
 
 static GBitmap *s_bomb_bitmap;
 static BitmapLayer *s_bomb_layers[MAX_BOMBS];
@@ -107,20 +112,10 @@ static void hide_bee_handler(void *data) {
 }
 
 static void bee_animation_handler(void *data) {
-  const Layer *window_layer = window_get_root_layer(s_main_window);
-  const GRect bounds = layer_get_bounds(window_layer);
-  const int16_t margin = 20;
-
-  const GSize bee_size = gbitmap_get_bounds(s_bee_bitmap).size;
-
-  const int16_t x_range = bounds.size.w - (2 * margin) - bee_size.w;
-  const int16_t y_range = bounds.size.h - (2 * margin) - bee_size.h;
-
-  const int16_t x = margin + (rand() % x_range);
-  const int16_t y = margin + (rand() % y_range);
-
-  layer_set_frame(bitmap_layer_get_layer(s_bee_layer), GRect(x, y, bee_size.w, bee_size.h));
-
+  const uint32_t r = rand();
+  const int16_t x = BEE_MARGIN + (r % s_bee_x_range);
+  const int16_t y = BEE_MARGIN + ((r >> 16) % s_bee_y_range);
+  layer_set_frame(bitmap_layer_get_layer(s_bee_layer), GRect(x, y, s_bee_size.w, s_bee_size.h));
   layer_set_hidden(bitmap_layer_get_layer(s_bee_layer), false);
   s_bee_timer = app_timer_register(BEE_DISPLAY_PAUSE_MS, hide_bee_handler, NULL);
 }
@@ -133,7 +128,6 @@ static void schedule_bee_animation() {
   const time_t now = time(NULL);
   const struct tm *current_time = localtime(&now);
   int seconds_until_next_55 = BEE_ANIM_SECOND_MARK - current_time->tm_sec;
-
   if (seconds_until_next_55 <= 0) {
     seconds_until_next_55 += 60;
   }
@@ -215,7 +209,7 @@ static void animation_timer_callback(void *data) {
 }
 
 static void update_time(const struct tm *tick_time) {
-  strftime(s_time_buffer, sizeof(s_time_buffer), clock_is_24h_style() ? TIME_FORMAT_24H : TIME_FORMAT_12H, tick_time);
+  strftime(s_time_buffer, sizeof(s_time_buffer), s_time_format, tick_time);
   text_layer_set_text(s_time_layer, s_time_buffer);
 }
 
@@ -270,6 +264,10 @@ static void main_window_load(Window *window) {
   bitmap_layer_set_compositing_mode(s_bee_layer, GCompOpSet);
   layer_add_child(window_layer, bitmap_layer_get_layer(s_bee_layer));
   layer_set_hidden(bitmap_layer_get_layer(s_bee_layer), true);
+  s_bee_size = gbitmap_get_bounds(s_bee_bitmap).size;
+  // Bee x,y range: within the watchface with margin on both sides
+  s_bee_x_range = bounds.size.w - 2 * BEE_MARGIN - s_bee_size.w;
+  s_bee_y_range = bounds.size.h - 2 * BEE_MARGIN - s_bee_size.h;
 
   // Create GBitmap for bomb
   s_bomb_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BOMB);
@@ -313,6 +311,7 @@ static void init() {
   });
   window_stack_push(s_main_window, true);
 
+  s_time_format = clock_is_24h_style() ? TIME_FORMAT_24H : TIME_FORMAT_12H;
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 
   // Make sure the time is displayed from the start
